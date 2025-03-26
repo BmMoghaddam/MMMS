@@ -42,34 +42,33 @@ q_dot_m=[0;0;0;0;0;0;0];
 V_I0=[0;0;0;0;0;0];
 
 % End-Effector
-out=sim('EE_iiwa7.slx');
+out=sim('iiwa7.slx');
 
 % **************************** Prepare properties in workspace                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    o be fed to simulink model
 
 n=7; %number of joints in the manipulator
 
-w=transpose([   0 0 1; ...
+w=transpose([   0 0 1;  ...
                 0 1 0; ...
-                0 0 1; ... % shoulder ball joint
-                0 -1 0;... %elbow 
                 0 0 1; ...
+                0 -1 0;... %elbow
+                0 0 1; ... % shoulder ball joint
                 0 1 0; ...
-                0 0 1  ... %wrist joint
-                            ]); %vector of rotation of each joint in inertial frame in initial pose
+                0 0 1; ...
+                ...
+                            ]);
 
 % **************************** Initiate Iota the inclusion map of the base
-iota0=eye(6,6);
-
-iota_orbit=[1 0 0; 0 1 0; 0 0 0; 0 0 0; 0 0 0; 0 0 1];
+iota0=eye(3,6); iota0(1,1)=1; iota0(2,2)=1; iota0(6,3)=1;
 
 % **************************** Joint positions for internal
-rho(1:3,1)=out.R.signal1.data(1:3,4,1);%+[0;0;0.5*sc_size];
-rho(1:3,2)=out.R.signal2.data(1:3,4,1);%+[0;0;0.5*sc_size];
-rho(1:3,3)=out.R.signal3.data(1:3,4,1);%+[0;0;0.5*sc_size];
-rho(1:3,4)=out.R.signal4.data(1:3,4,1);%+[0;0;0.5*sc_size];
-rho(1:3,5)=out.R.signal5.data(1:3,4,1);%+[0;0;0.5*sc_size];
-rho(1:3,6)=out.R.signal6.data(1:3,4,1);%+[0;0;0.5*sc_size]; rho(2,6)=0;
-rho(1:3,7)=out.R.signal7.data(1:3,4,1);%+[0;0;0.5*sc_size];
+rho(1:3,1)=out.R.signal1.data(1:3,4,1)+[0;0;0.5*sc_size];
+rho(1:3,2)=out.R.signal2.data(1:3,4,1)+[0;0;0.5*sc_size];
+rho(1:3,3)=out.R.signal3.data(1:3,4,1)+[0;0;0.5*sc_size];
+rho(1:3,4)=out.R.signal4.data(1:3,4,1)+[0;0;0.5*sc_size];
+rho(1:3,5)=out.R.signal5.data(1:3,4,1)+[0;0;0.5*sc_size];
+rho(1:3,6)=out.R.signal6.data(1:3,4,1)+[0;0;0.5*sc_size]; rho(2,6)=0;
+rho(1:3,7)=out.R.signal7.data(1:3,4,1)+[0;0;0.5*sc_size];
 
 
 % **************************** form the overall twist matrix
