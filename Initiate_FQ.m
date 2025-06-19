@@ -94,69 +94,12 @@ dist_force=0.0001;
 
 
 
-%% Orbit
-radius_orbit=(6371+35786)*1000; %[m] GEO satellite  800
-mu_earth=3.986004418*10^14; %
-G_gravity=6.6743 * 10^(-11) ;
-vel_orbit=sqrt(mu_earth/radius_orbit); % [m/s] circular
-mu_orbit=sqrt(radius_orbit*mu_earth); %[Kg.m/s] = sqrt(r.v)
-e_orbit=0; % circle
-theta0=0;
-E0=2*atan((1+e_orbit)/(1-e_orbit)*tan(theta0/2));
-n_orbit=(mu_earth^2)/(mu_orbit^3); %((mu_orbit)^(3/2))/(mu_earth)^2;
-Mean_Anomaly0=MeanAnomaly(e_orbit,E0);
+%%
 
-% Orbit Target
-radius_orbit_t=(6371+35786)*1000; %[m] GEO satellite 35786
-mu_earth=3.986004418*10^14; %
-vel_orbit_t=sqrt(mu_earth/radius_orbit)*1.000001; % [m/s] elliptic
-mu_orbit_t=radius_orbit_t*vel_orbit_t;%sqrt(radius_orbit*mu_earth)*1.01; %[Kg.m/s] = sqrt(r.v)
-e_orbit_t=(mu_orbit_t^2/mu_earth)/radius_orbit_t-1; % circle ->0.000001
-theta0_t=0;
-E0_t=2*atan((1+e_orbit)/(1-e_orbit)*tan(theta0/2));
-n_orbit_t=(mu_earth^2)/(mu_orbit^3); %((mu_orbit)^(3/2))/(mu_earth)^2;
-Mean_Anomaly0_t=MeanAnomaly(e_orbit,E0);
-
-%Mu_orbit=[0;0;0;0;0;mu_orbit];
-%Mu_orbit_iota=[0;0;mu_orbit];
+rho_It= [0;0;1.7];
+V_It=[0.0005;0.0005;0]; %[0;0;0];-0.002z
+w_t=-[0;0;0.002];
 
 %%
 
-t=120;
-
-theta=find_theta(t,e_orbit,n_orbit,Mean_Anomaly0);
-theta_t=find_theta(t,e_orbit_t,n_orbit_t,Mean_Anomaly0_t);
-
-V_inertia_curly=(mu_earth/mu_orbit)*[-sin(theta0); e_orbit+cos(theta0);    0];
-
-V_inertia=V_inertia_curly;
-V_inertia_t=V_inertia;
-
-p_orbit=(mu_orbit^2/mu_earth)/(1+e_orbit*cos(theta))*([cos(theta);sin(theta);0]-[cos(theta0);sin(theta0);0])-V_inertia*t;
-
-p_orbit_t=(mu_orbit_t^2/mu_earth)/(1+e_orbit_t*cos(theta_t))*([cos(theta_t);sin(theta_t);0]-[cos(theta0_t);sin(theta0_t);0])-V_inertia_t*t;
-
-p_rel=p_orbit-p_orbit_t;
-
-
-
-%% sim time test
-
-simTime=zeros(1,20);
-
-for i=1:20
-    radius_orbit=(6371+35786)*1000; 
-    vel_orbit=sqrt(mu_earth/radius_orbit); % [m/s] circular
-    mu_orbit=sqrt(radius_orbit*mu_earth); %[Kg.m/s] = sqrt(r.v)
-    e_orbit=0; % circle
-    theta0=0;
-    E0=2*atan((1+e_orbit)/(1-e_orbit)*tan(theta0/2));
-    n_orbit=(mu_earth^2)/(mu_orbit^3); %((mu_orbit)^(3/2))/(mu_earth)^2;
-    Mean_Anomaly0=MeanAnomaly(e_orbit,E0);
-
-    simout=sim('KUKA_EE_Controller_v28_orbital_verification8'); % run sim model
-    simTime(i)=simout.SimulationMetadata.TimingInfo.ExecutionElapsedWallTime;
-
-end
-avesimtime=mean(simTime)
-
+Fake_Manip_grad=-0.2.*eye(7);
